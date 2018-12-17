@@ -3,6 +3,7 @@ title: "Iteration with `purrr`"
 output: 
   html_document: 
     toc: yes
+    toc_float: true
 ---
 
 ```{r setup, include=FALSE}
@@ -14,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 - Jenny Bryan's [webinar](https://www.rstudio.com/resources/webinars/thinking-inside-the-box-you-can-do-that-inside-a-data-frame/): _Thinking inside the box: you can do that inside a data frame?!_
 - Jenny Bryan's [purrr tutorial](https://jennybc.github.io/purrr-tutorial/)
 
-## `map` syntax
+## Syntax
 
 `purrr::map(.x, .f, ...)`
 
@@ -23,7 +24,7 @@ For each element of `.x`, do function `.f` with `...` parameters.
 ![](img/lego_minis.jpg)
 ![](img/lego_antennate.jpg)
 
-## Basic `map` example
+## Basic example
 
 Now that we have a general idea of what's going on, how do we use it in practice? Let's play with the starwars dataset:
 
