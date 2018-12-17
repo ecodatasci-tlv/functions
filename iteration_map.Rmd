@@ -1,0 +1,128 @@
+---
+title: "Iteration with `purrr`"
+output: 
+  html_document: 
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Excellent resources
+
+- Jenny Bryan's [webinar](https://www.rstudio.com/resources/webinars/thinking-inside-the-box-you-can-do-that-inside-a-data-frame/): _Thinking inside the box: you can do that inside a data frame?!_
+- Jenny Bryan's [purrr tutorial](https://jennybc.github.io/purrr-tutorial/)
+
+## `map` syntax
+
+`purrr::map(.x, .f, ...)`
+
+For each element of `.x`, do function `.f` with `...` parameters.
+
+![](img/lego_minis.jpg)
+![](img/lego_antennate.jpg)
+
+## Basic `map` example
+
+Now that we have a general idea of what's going on, how do we use it in practice? Let's play with the starwars dataset:
+
+```{r}
+library(tidyverse)
+data("starwars")
+starwars
+```
+
+Let's say we want to write a sentence that describes how tall each character is...
+
+```{r}
+starwars %>% 
+    select(name, hair_color) %>% 
+    mutate(sentence = paste("This character has", hair_color, "hair"))
+```
+
+Great!  Works like a charm.  But notice that some of the characters have NA's for hair color because they don't have any hair.  Let's write a function to accoutn for that:
+
+```{r}
+hair_sentence <- function(hair_color) {
+    if(is.na(hair_color)){
+        return(paste("This character has no hair."))
+    }
+    
+    return(paste("This character has", hair_color, "hair"))
+}
+```
+
+We should be able to use this function the way we used `paste` earlier...
+
+```{r warning=TRUE}
+starwars %>% 
+    select(name, hair_color) %>% 
+    mutate(sentence = hair_sentence(hair_color))
+```
+
+Alas, no! Something weird happened. The sentences for characters without hair didn't change. 
+
+This is because the function wasn't properly _vectorized_, which means that you can do something to an entire vector of values at the same time. 
+
+One way to deal with this problem is to use the `map` function. We can take the `hair_color` vector and apply the `hair_sentence` function to each of its elements:
+
+```{r}
+starwars %>% 
+    select(name, hair_color) %>% 
+    mutate(sentence = map(hair_color, hair_sentence))
+```
+
+Since we didn't define an output type, it returns a list of character vectors. This is more or less what `lapply` does.
+
+If you know the _type_ of your output, you can also specify it directly:
+
+```{r}
+starwars %>% 
+    select(name, hair_color) %>% 
+    mutate(sentence = map_chr(hair_color, hair_sentence))
+```
+
+## Mapping with parameters
+
+Now let's say you want to add a parameter to your function to capitalize the sentence for characters without hair.  
+
+```{r}
+hair_sentence <- function(hair_color, caps = FALSE) {
+    if(is.na(hair_color)){
+        no_hair <- paste("This character has no hair.")
+        if(caps == TRUE){
+            no_hair <- toupper(no_hair)
+        }
+        return(no_hair)
+    }
+    
+    return(paste("This character has", hair_color, "hair"))
+}
+```
+
+If we don't supply a parameter, the function will just use the defaults. If we _do_ want to use `caps = TRUE` we can do it in two ways:
+
+1. Supply the parameter as the 3rd argument in the map function.
+
+```{r}
+starwars %>% 
+    select(name, hair_color) %>% 
+    mutate(sentence = map_chr(hair_color, hair_sentence, caps = TRUE))
+```
+
+2. Define all parameters for the function explicitly using ~ to represent a function and `.x` to represent each element of `hair_color`.
+
+```{r}
+starwars %>% 
+    select(name, hair_color) %>% 
+    mutate(sentence = map_chr(hair_color, 
+                              ~hair_sentence(.x, caps = TRUE)))
+```
+
+Doing it this way looks weird at first, but it gives you more _flexibility_. 
+
+For example, you can reorder the parameters and get the same result, since you're defining the parameters explicitly.
+
+**Try it yourself:** if you wanted to write a sentence about each character's eye color, how would you do it? If their eyecolor is unknown, write a different sentence.
+
