@@ -951,7 +951,7 @@ toc()
 <h3>Sequence</h3>
 <div class="slideContent" >
 <p><code>for (i in (1:10))</code> is a sequence. So is <code>while TRUE</code>. 
-<code>for (i in seq_along(10))</code> is a better way of sequencing if you might get a vector of length 0 like so:</p>
+<code>for (i in seq_along(vector))</code> is a better way of sequencing if you might get a vector of length 0 like so:</p>
 
 <pre><code class="r">y &lt;- vector(&quot;double&quot;, 0)
 seq_along(y)
@@ -1002,7 +1002,7 @@ col_means &lt;- function(dataframe){
 col_means(data)
 </code></pre>
 
-<pre><code>[1]  0.3631993 -0.3598858
+<pre><code>[1] -0.2508394 -0.3507583
 </code></pre>
 
 </div>

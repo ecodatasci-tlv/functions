@@ -135,7 +135,7 @@ toc()
 Sequence
 ========================================================
 `for (i in (1:10))` is a sequence. So is `while TRUE`. 
-`for (i in seq_along(10))` is a better way of sequencing if you might get a vector of length 0 like so:
+`for (i in seq_along(vector))` is a better way of sequencing if you might get a vector of length 0 like so:
 
 
 ```r
@@ -187,7 +187,7 @@ col_means(data)
 ```
 
 ```
-[1]  0.3631993 -0.3598858
+[1] -0.2508394 -0.3507583
 ```
 
 
