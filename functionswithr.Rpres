@@ -74,11 +74,87 @@ f2 <- function(x) {
 }
 ```
 
+
+Anonymous functions
+========================================================
+Sometimes, you won't save the function like seen below, but rather - use it directly in a code:
+
+```{r}
+matrix_of_numbers <- matrix(1:100,10,10)
+apply(matrix_of_numbers,2,function(x) x^2)
+```
+
+
 Iterations
 ========================================================
+To further streamline your code, use iterations to repeat chuncks of code.
+Most basic are `for` and `while` loops. However, there are more ways to iterate code.
+
+Iterations have three main components: an output, a sequence to iterate over, and the body of code.
+
+Vector allocation will save you a lot of time!
+========================================================
+
+```{r eval=F}
+library(tictoc)
+n_times <- 50000
+tic()
+a <- NULL
+for(i in seq_len(n_times)){
+    a <- c(a, i^2)
+    a
+}
+toc()
+tic()
+a <- vector("double", n_times)
+for(i in seq_len(n_times)){
+    a[i] <- i^2
+}
+toc()
+```
+
+Sequence
+========================================================
+`for (i in (1:10))` is a sequence. So is `while TRUE`. 
+`for (i in seq_along(10))` is a better way of sequencing if you might get a vector of length 0 like so:
+
+```{r}
+y <- vector("double", 0)
+seq_along(y)
+#> integer(0)
+1:length(y)
+#> [1] 1 0
+```
+
+for i in unique(df$column)
+========================================================
+That's a common phrase when working with data.  So common that there is a tidyverse package that does it for you.
+
+![](purrr.png) We will discuss it shortly...
+
+R is a functional language 
+========================================================
+That means you can wrap loops within a function and just call that function when neccessary.
+Remember - limit your copy and paste as much as possible!
+
+```{r}
+library(tidyverse)
+data <- tibble(a=rnorm(10),
+               b=rnorm(10))
+col_means <- function(dataframe){
+  output <- vector("double",ncol(dataframe))
+  for (i in seq_along(dataframe)){
+    output[[i]] <- mean(dataframe[[i]])
+  }
+  return(output)
+}
+col_means(data)
+```
 
 
 99 bottles of beer on the wall
 ========================================================
+
+Create a function that returns the full song for any number of any vessel (bottles,cans, even boxes... ) of any drink (But no Jägermeister please):
 
 >99 bottles of beer on the wall, 99 bottles of beer. Take one down, pass it around - 98 bottles of beer on the wall
